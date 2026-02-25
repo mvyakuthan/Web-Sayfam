@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kişisel Web Sayfam</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        header {
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            border-bottom: 4px solid #667eea;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        header p {
+            font-size: 1.1rem;
+            color: #ddd;
+        }
+
+        nav {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            padding: 0 1rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        nav a:hover,
+        nav a.active {
+            background: #667eea;
+            transform: scale(1.1);
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        section {
+            background: white;
+            border-radius: 10px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: none;
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        section.active {
+            display: block;
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid #764ba2;
+            padding-bottom: 0.5rem;
+            animation: slideInLeft 0.6s ease-out;
+        }
+
+        h3 {
+            color: #764ba2;
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+            font-size: 1.5rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .hobby-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .hobby-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+            animation: bounceIn 0.6s ease-out backwards;
+        }
+
+        .hobby-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .hobby-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .hobby-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .hobby-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .hobby-card h3 {
+            color: white;
+            margin-top: 0;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .hobby-card p {
+            color: #f0f0f0;
+            margin-bottom: 0;
+        }
+
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .contact-info {
+            padding: 2rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            animation: slideInLeft 0.6s ease-out;
+        }
+
+        .contact-info h3 {
+            color: #667eea;
+            margin-top: 0;
+        }
+
+        .contact-item {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .contact-item:last-child {
+            border-bottom: none;
+        }
+
+        .contact-item strong {
+            color: #764ba2;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-item span {
+            color: #555;
+        }
+
+        #map {
+            height: 400px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            animation: slideInRight 0.6s ease-out;
+        }
+
+        footer {
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        footer p {
+            color: #ddd;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Animasyonlar */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            nav ul {
+                gap: 1rem;
+            }
+
+            section {
+                padding: 1.5rem;
+            }
+
+            .contact-content {
+                grid-template-columns: 1fr;
+            }
+
+            #map {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>👨‍💻 Kişisel Web Sayfam</h1>
+        <p>Merhaba, ben Muhammed Vyakuthan. Hoş geldiniz!</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a class="nav-link active" data-section="about">Hakkımda</a></li>
+            <li><a class="nav-link" data-section="hobbies">Hobilerim</a></li>
+            <li><a class="nav-link" data-section="contact">İletişim</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <!-- Hakkımda Bölümü -->
+        <section id="about" class="active">
+            <h2>Hakkımda</h2>
+            <p>Merhaba! Ben Yakuthan, bir web geliştirici ve yazılım mühendisidir. Teknoloji ve inovasyon tutkusuyla dolu birisiyim.</p>
+            
+            <h3>Eğitim</h3>
+            <p>Web geliştirme, yazılım mühendisliği ve bilgisayar bilimleri alanlarında çeşitli eğitimler almıştım. Sürekli öğrenmeye ve gelişmeye inanıyorum.</p>
+            
+            <h3>Deneyim</h3>
+            <p>Yazılım öğrenmeye yeni başladım.HTML, CSS, JavaScript, Python gibi programlama dillerini öğreniyorum. Açık kaynak projelere katkıda bulunmaktan hoşlanıyorum.</p>
+            
+            <h3>Hedeflerim</h3>
+            <p>Çevrenin sorunlarını teknoloji aracılığıyla çözmek ve yaşanabilir bir dünya istiyorum. Web uygulamaları geliştirmeyi hedefliyorum.</p>
+        </section>
+
+        <!-- Hobilerim Bölümü -->
+        <section id="hobbies">
+            <h2>🎯 Hobilerim</h2>
+            <p>Boş zamanlarımda aşağıdaki aktiviteleri yapmayı çok seviyorum:</p>
+
+            <div class="hobby-grid">
+                <div class="hobby-card">
+                    <h3>📚 Kod Yazma</h3>
+                    <p>Yeni projeler geliştirmek ve algoritma çözmek benim en büyük hobilerim. Açık kaynak katkıları yapmaktan hoşlanıyorum.</p>
+                </div>
+
+                <div class="hobby-card">
+                    <h3>🎮 Oyun Oynamak</h3>
+                    <p>Strateji ve aksiyon oyunlarının tasarımını ve mekaniklerini incelemek</p>
+                </div>
+
+                <div class="hobby-card">
+                    <h3>✈️ Seyahat</h3>
+                    <p>Dünyayı keşfetmekten, farklı kültürleri tanımaktan ve yeni yerler görmekten çok keyif alıyorum.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- İletişim Bölümü -->
+        <section id="contact">
+            <h2>📞 İletişim</h2>
+            
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>İletişim Bilgileri</h3>
+                    
+                    <div class="contact-item">
+                        <strong>📧 E-posta</strong>
+                        <span><a href="mailto:m*******@gmail.com" style="color: #667eea; text-decoration: none;">m******@gmail.com</a></span>
+                    </div>
+
+                    <div class="contact-item">
+                        <strong>📱 Telefon</strong>
+                        <span>+90 (5XX) XXX-XXXX</span>
+                    </div>
+
+                    <div class="contact-item">
+                        <strong>🔗 GitHub</strong>
+                        <span><a href="https://github.com/mvyakuthan" target="_blank" style="color: #667eea; text-decoration: none;">github.com/mvyakuthan</a></span>
+                    </div>
+
+                    <div class="contact-item">
+                        <strong>🌐 LinkedIn</strong>
+                        <span><a href="https://linkedin.com/in/muhammadvyakuthan" target="_blank" style="color: #667eea; text-decoration: none;">linkedin.com/in/mvyakuthan</a></span>
+                    </div>
+
+                    <div class="contact-item">
+                        <strong>📍 Konum</strong>
+                        <span>Türkiye</span>
+                    </div>
+                </div>
+
+                <div id="map"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 mvyakuthan. Tüm hakları saklıdır.</p>
+        <p>Bu sayfa GitHub Pages üzerinden sunulmaktadır.</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script>
+        // Navigasyon işlevselliği
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('section');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                const sectionId = this.getAttribute('data-section');
+
+                // Tüm bölümleri gizle
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+
+                // Seçilen bölümü göster
+                document.getElementById(sectionId).classList.add('active');
+
+                // Aktif menü öğesini işaretle
+                navLinks.forEach(nav => {
+                    nav.classList.remove('active');
+                });
+                this.classList.add('active');
+
+                // Harita varsa yeniden boyutlandır
+                if (sectionId === 'contact' && map) {
+                    setTimeout(() => {
+                        map.invalidateSize();
+                    }, 100);
+                }
+            });
+        });
+
+        // Leaflet Haritası - İletişim bölümü için
+        let map;
+
+        function initMap() {
+            // Harita oluştur (Türkiye'nin orta noktasında)
+            map = L.map('map').setView([38.9637, 35.2433], 6);
+
+            // OpenStreetMap tile layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 19
+            }).addTo(map);
+
+            // İstanbul'da marker ekle
+            L.marker([41.0082, 28.9784], {
+                title: 'İstanbul, Türkiye'
+            })
+            .bindPopup('<strong>📍 İstanbul</strong><br>Yaşadığım şehir')
+            .addTo(map)
+            .openPopup();
+
+            // Ankara'da marker ekle
+            L.marker([39.9334, 32.8597], {
+                title: 'Ankara, Türkiye'
+            })
+            .bindPopup('<strong>📍 Ankara</strong><br>Başkent')
+            .addTo(map);
+
+            // İzmir'de marker ekle
+            L.marker([38.4161, 27.1288], {
+                title: 'İzmir, Türkiye'
+            })
+            .bindPopup('<strong>📍 İzmir</strong><br>Ziyaret ettiğim şehir')
+            .addTo(map);
+        }
+
+        // İletişim bölümü gösterildiğinde haritayı başlat
+        document.addEventListener('DOMContentLoaded', function() {
+            // İlk başta contact bölümü gizli olduğu için,
+            // iletişim bölümüne tıklandığında başlatacağız
+            const contactLink = document.querySelector('[data-section="contact"]');
+            const originalClick = contactLink.onclick;
+            
+            contactLink.addEventListener('click', function() {
+                setTimeout(() => {
+                    if (!map) {
+                        initMap();
+                    }
+                }, 100);
+            });
+        });
+
+        // Smooth scroll animasyonu
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href !== '#') {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
